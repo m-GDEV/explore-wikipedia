@@ -99,6 +99,7 @@ def explore_wiki(url: str, graph: nx.Graph, depth: int, depth_limit: int, source
             
             raise TerminationException(f"Path found {global_depth} layers deep")
         except nx.NetworkXNoPath:
+            # This should be impossible
             print("No path found between source and taget, continuing")
         except nx.NodeNotFound:
             print("Target has not been discovered yet")
@@ -110,13 +111,29 @@ def explore_wiki(url: str, graph: nx.Graph, depth: int, depth_limit: int, source
         # Just passing along source and target, don't need to check if they exist
         explore_wiki(i, graph, depth + 1, depth_limit, source, target)
 
+# Convert nx graph to a cytoscape compatible format
+def nx_graph_to_cytoscape(graph: nx.Graph): 
+    # Assume script is run from project root
+    with open("./build/converted.js", "w") as f: 
+        
+        file = "export const elements = [\n"
+        for node in graph.nodes:
+            file += f"{{ data: {{ id: \"{node}\" }} }},\n"
+        
+        for edge in graph.edges:
+            file += f"{{ data: {{\n\tsource: \"{edge[0]}\",\n\ttarget: \"{edge[1]}\"\n}}}},\n"
+
+        file += "]"
+
+        f.write(file)
 
 def main():
 
-    #  starting_url="/wiki/B_(programming_language)"
+    starting_url="/wiki/B_(programming_language)"
     #  target_url = "/wiki/Windows"
-    starting_url = "/wiki/List_of_universities_in_Canada"
-    target_url = "/wiki/1819"
+    target_url = "/wiki/ABC_ALGOL"
+    #  starting_url = "/wiki/List_of_universities_in_Canada"
+    #  target_url = "/wiki/1819"
 
     wikis_graph = nx.Graph()
 
@@ -125,9 +142,12 @@ def main():
     except (TerminationException, KeyboardInterrupt, RecursionError) as e:
         print(repr(e))
         print(wikis_graph)
+        nx_graph_to_cytoscape(wikis_graph)
 #
         #  nx.draw(wikis_graph, with_labels=True, node_size=200, font_size=12)
         #  plt.show()
+
+        #  nx.write_graphml(G=wikis_graph, path="../../graphs/saved.graphml", prettyprint=True)
 
 
 if __name__ == "__main__": 

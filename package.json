@@ -1,0 +1,16 @@
+{
+    "name": "explore-wikipedia",
+    "version": "0.1",
+    "repository": "https://github.com/m-GDEV/explore-wikipedia",
+    "author": "Musa Ahmed <musaa.ahmed7@gmail.com>",
+    "license": "GPL-3",
+    "type": "module",
+    "scripts": {
+        "dev": "vite serve src/web/"
+    },
+    "dependencies": {
+        "cytoscape": "^3.28.1",
+        "cytoscape-graphml": "^1.0.6",
+        "vite": "^5.1.3"
+    }
+}
